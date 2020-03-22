@@ -1,28 +1,7 @@
 import React from "react";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
-import Badge from "@material-ui/core/Badge";
-import ListUI from "@material-ui/core/List";
-import ListIcon from "@material-ui/icons/List";
-import Item from "./Item";
-
-const List = ({items, remove, toggle}) => {
-    return (
-        <ListUI>
-            {items.map(item => {
-                return (
-                    <Item
-                        key={item._id}
-                        remove={remove}
-                        item={item}
-                        toggle={toggle}
-                    />
-                )
-            })}
-        </ListUI>
-    );
-}
+import NewItem from "./NewItem";
+import Header from "./Header";
+import List from "./List";
 
 class App extends React.Component {
     state = {
@@ -34,13 +13,11 @@ class App extends React.Component {
         ]
     }
 
-    textbox = React.createRef();
-
-    add = () => {
+    add = (name) => {
         this.setState({
             items: [
                 ...this.state.items,
-                { _id: 3, name: this.textbox.current.value, status: 0 }
+                { _id: 3, name, status: 0 }
             ]
         });
     }
@@ -63,19 +40,20 @@ class App extends React.Component {
         })
     }
 
+    clear = () => {
+        this.setState({
+            items: this.state.items.filter(i => i.status === 0)
+        });
+    }
+
     render() {
         return (
             <div>
-                <AppBar position="static">
-                    <Toolbar>
-                        <Badge badgeContent={this.state.items.filter(i => i.status === 0).length} color="secondary">
-                            <ListIcon />
-                        </Badge>
-                        <Typography
-                            style={{marginLeft: 20}}
-                            variant="h6">Todo List</Typography>
-                    </Toolbar>
-                </AppBar>
+                <Header
+                    clear={this.clear}
+                    count={this.state.items.filter(i => i.status === 0).length} />
+
+                <NewItem add={this.add} />
 
                 <List
                     items={this.state.items.filter(i => i.status === 0)}
@@ -87,8 +65,6 @@ class App extends React.Component {
                     remove={this.remove}
                     toggle={this.toggle}
                 />
-                <input type="text" ref={this.textbox} />
-                <button onClick={this.add}>Add</button>
             </div>
         )
     }
