@@ -3,32 +3,44 @@ import NewItem from "./NewItem";
 import Header from "./Header";
 import List from "./List";
 
+const api = 'http://localhost:8000/tasks';
+
 class App extends React.Component {
     state = {
-        items: [
-            { _id: 1, name: 'Egg', status: 1 },
-            { _id: 2, name: 'Milk', status: 0 },
-            { _id: 3, name: 'Bread', status: 0 },
-            { _id: 4, name: 'Butter', status: 0 },
-        ]
+        items: []
+    }
+
+    componentDidMount() {
+        fetch(api).then(res => res.json()).then(items => {
+            this.setState({ items });
+        });
     }
 
     add = (name) => {
-        this.setState({
-            items: [
-                ...this.state.items,
-                { _id: 3, name, status: 0 }
-            ]
+        fetch(api, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ name, price: 0 })
+        }).then(res => res.json()).then(item => {
+            this.setState({
+                items: [ ...this.state.items, item ]
+            });
         });
     }
 
     remove = (_id) => () => {
+        fetch(`${api}/${_id}`, { method: 'DELETE' });
+
         this.setState({
             items: this.state.items.filter(i => i._id !== _id)
         });
     }
 
     toggle = (_id) => () => {
+        fetch(`${api}/${_id}`, { method: 'PATCH' });
+
         this.setState({
             items: this.state.items.map(item => {
                 if(item._id === _id) {
@@ -41,6 +53,8 @@ class App extends React.Component {
     }
 
     clear = () => {
+        fetch(api, { method: 'DELETE' });
+
         this.setState({
             items: this.state.items.filter(i => i.status === 0)
         });

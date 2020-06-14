@@ -1,28 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import Header from './Header';
 import TodoList from './TodoList';
 import AddTask from './AddTask';
 
+const api = 'http://localhost:8000/tasks';
+
 const App = props => {
-    const [ items, setItem ] = useState([
-        { id: 1, name: "Egg", status: 0 },
-        { id: 2, name: "Milk", status: 0 },
-        { id: 3, name: "Bread", status: 1 },
-    ]);
+    const [ items, setItem ] = useState([]);
+
+    useEffect(() => {
+        fetch(api).then(res => res.json()).then(items => {
+            setItem(items);
+        });
+    }, []);
 
     const add = name => {
-        const id = items[items.length - 1].id + 1;
-        setItem([ ...items, { id, name, status: 0 } ]);
+        fetch(api, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ name, price: 0 })
+        }).then(res => res.json()).then(item => {
+            setItem([ ...items, item ]);
+        });
     }
 
-    const remove = id => {
-        setItem(items.filter(i => i.id !== id));
+    const remove = _id => {
+        fetch(`${api}/${_id}`, { method: 'DELETE' });
+        setItem(items.filter(i => i._id !== _id));
     }
 
-    const toggle = id => {
+    const toggle = _id => {
+        fetch(`${api}/${_id}`, { method: 'PATCH' });
         setItem(items.map(i => {
-            if(i.id === id) i.status = +!i.status;
+            if(i._id === _id) i.status = +!i.status;
             return i;
         }));
     }

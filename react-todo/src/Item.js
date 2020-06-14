@@ -3,11 +3,11 @@ import React from 'react';
 const Item = ({ item, remove, toggle }) => (
     <li>
         <input type="checkbox" checked={item.status} onChange={() => {
-            toggle(item.id);
+            toggle(item._id);
         }} />
         { item.name }
         <a href="#/" onClick={() => {
-            remove(item.id);
+            remove(item._id);
         }}>&times;</a>
     </li>
 );

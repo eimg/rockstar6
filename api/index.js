@@ -8,6 +8,9 @@ const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+const cors = require('cors');
+app.use(cors());
+
 app.post('/tasks', function(req, res) {
     const name = req.body.name;
     const price = req.body.price;
@@ -47,6 +50,12 @@ app.put('/tasks/:id', function(req, res) {
             return res.json(data);
         }
     );
+});
+
+app.delete('/tasks', function(req, res) {
+    db.tasks.remove({ status: 1 }, function(err, data) {
+        return res.json(data);
+    });
 });
 
 app.delete('/tasks/:id', function(req, res) {

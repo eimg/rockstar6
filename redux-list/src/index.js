@@ -9,6 +9,8 @@ import { Provider } from 'react-redux';
 
 const store = createStore((state = [], action) => {
     switch(action.type) {
+        case 'SET':
+            return action.items;
         case 'ADD':
             return [ ...state, action.item ];
         case 'DEL':
@@ -17,9 +19,6 @@ const store = createStore((state = [], action) => {
             return state;
     }
 });
-
-store.dispatch({ type: 'ADD', item: { 'id': '1', 'name': 'Apple', 'price': 3.99 } });
-store.dispatch({ type: 'ADD', item: { 'id': '2', 'name': 'Orange', 'price': 2.99 } });
 
 ReactDOM.render(
     <React.StrictMode>
