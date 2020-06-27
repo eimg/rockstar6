@@ -9,78 +9,53 @@ import {
     Right,
     Body,
     Title,
+    Content,
+    List,
+    ListItem,
+    Item as NativeItem,
+    Input,
+    Button,
+    Text,
 } from 'native-base';
 import {
     StyleSheet,
     FlatList,
-    Button,
     TextInput,
     View,
-    Text,
     TouchableOpacity,
 } from "react-native";
 
 const styles = StyleSheet.create({
-    container: {
-        backgroundColor: '#fef6e4',
-        flex: 1,
-    },
-    appbar: {
-        padding: 20,
-        paddingTop: 40,
-        backgroundColor: '#8bd3dd',
-        flexDirection: 'row',
-    },
-    title: {
-        fontSize: 30,
-        flexGrow: 1,
-    },
-    content: {
-        margin: 10,
-        backgroundColor: '#fff',
-    },
-    item: {
-        flexDirection: 'row',
-        padding: 10,
-        borderBottomWidth: 1,
-        borderColor: '#f582ae',
-    },
-    itemText: {
-        marginLeft: 30,
-        flexGrow: 1,
-        fontSize: 20
-    },
-    input: {
-        padding: 10,
-        fontSize: 20,
-        borderBottomWidth: 1,
-        color: '#fff',
-        backgroundColor: '#f582ae',
-    }
+
 });
 
 const Item = ({remove, toggle, item}) => {
     return (
-        <View style={styles.item}>
-            <TouchableOpacity onPress={() => {
-                toggle(item._id);
-            }}>
-                {
-                    item.status
-                    ? <Ionicons name="ios-checkmark-circle" size={32} />
-                    : <Ionicons name="ios-help-circle-outline" size={32} />
-                }
-            </TouchableOpacity>
-
-            <Text style={styles.itemText}>
-                {item.name} (${item.price})
-            </Text>
-            <TouchableOpacity onPress={() => {
-                remove(item._id);
-            }}>
-                <Ionicons name="ios-trash" size={32} />
-            </TouchableOpacity>
-        </View>
+        <ListItem icon>
+            <Left>
+                <TouchableOpacity onPress={() => {
+                    toggle(item._id);
+                }}>
+                    {
+                        item.status
+                        ? <Ionicons name="ios-checkmark-circle" color="blue" size={32} />
+                        : <Ionicons name="ios-help-circle-outline" color="green" size={32} />
+                    }
+                </TouchableOpacity>
+            </Left>
+            <Body>
+                <Text>
+                    {item.name} (${item.price})
+                </Text>
+            </Body>
+            <Right>
+                <TouchableOpacity onPress={() => {
+                    remove(item._id);
+                }}>
+                    <Ionicons name="ios-trash" color="red" size={32} />
+                </TouchableOpacity>
+            </Right>
+        </ListItem>
     )
 }
 
@@ -110,8 +85,8 @@ const App = props => {
         });
     }, []);
 
-    const [name, setName] = useState('Name');
-    const [price, setPrice] = useState('Price');
+    const [name, setName] = useState('');
+    const [price, setPrice] = useState('');
     const [ready, setReady] = useState(false);
 
     const add = () => {
@@ -146,51 +121,64 @@ const App = props => {
     }
 
     return (
-        <View style={styles.container}>
-            <Container>
-                <Header>
-                    <Body>
-                        <Title>Native Base</Title>
-                    </Body>
-                    <Right>
-                        <TouchableOpacity onPress={clear}>
-                            <Ionicons name="ios-remove-circle-outline" size={32} />
-                        </TouchableOpacity>
-                    </Right>
-                </Header>
-            </Container>
+        <Container>
+            <Header>
+                <Left>
+                    <Button transparent>
+                        <Ionicons name="ios-list" color="white" size={32} />
+                    </Button>
+                </Left>
+                <Body>
+                    <Title>Native Base</Title>
+                </Body>
+                <Right>
+                    <TouchableOpacity onPress={clear}>
+                        <Ionicons name="ios-remove-circle-outline" color="white" size={32} />
+                    </TouchableOpacity>
+                </Right>
+            </Header>
+            <Content>
+                <List>
+                    {items.filter(i => i.status === 0).map(item => {
+                        return <Item key={item._id} remove={remove} item={item} toggle={toggle} />
+                    })}
 
-            <View style={styles.content}>
-                <FlatList
-                    data={items.filter(i => i.status === 0)}
-                    renderItem={({ item }) => (
-                        <Item remove={remove} item={item} toggle={toggle} />
-                    )}
-                    keyExtractor={ i => i._id }
-                />
+                    <ListItem itemDivider style={{paddingTop: 20}}>
+                        <Text>DONE</Text>
+                    </ListItem>
 
-                <FlatList
-                    data={items.filter(i => i.status === 1)}
-                    renderItem={({ item }) => (
-                        <Item remove={remove} item={item} toggle={toggle} />
-                    )}
-                    keyExtractor={ i => i._id }
-                />
-            </View>
-            <View style={styles.content}>
-                <TextInput
-                    style={styles.input}
-                    onChangeText={text => setName(text)}
-                    value={name}
-                />
-                <TextInput
-                    style={styles.input}
-                    onChangeText={text => setPrice(text)}
-                    value={price}
-                />
-                <Button title="Add Task" onPress={add} />
-            </View>
-        </View>
+                    {items.filter(i => i.status === 1).map(item => {
+                        return <Item key={item._id} remove={remove} item={item} toggle={toggle} />
+                    })}
+
+                    <ListItem itemDivider style={{paddingTop: 20}}>
+                        <Text>NEW TASK</Text>
+                    </ListItem>
+                </List>
+
+                <View style={{padding:10}}>
+                    <NativeItem regular>
+                        <Input
+                            placeholder="Enter Name"
+                            onChangeText={text => setName(text)}
+                            value={name}
+                        />
+                    </NativeItem>
+                    <NativeItem regular>
+                        <Input
+                            placeholder="Enter Price"
+                            onChangeText={text => setPrice(text)}
+                            value={price}
+                        />
+                    </NativeItem>
+
+                    <Button full onPress={add}>
+                        <Ionicons name="ios-add" color="white" size={32} />
+                        <Text>Add Task</Text>
+                    </Button>
+                </View>
+            </Content>
+        </Container>
     )
 }
 
