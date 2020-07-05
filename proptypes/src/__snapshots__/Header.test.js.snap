@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly 1`] = `
+<div>
+  <h1
+    title="TDD"
+  >
+    Prop Type 
+    2
+  </h1>
+</div>
+`;

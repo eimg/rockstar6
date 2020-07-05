@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 
 const Header = props => {
     return (
-        <>
-            <h1>Prop Type {props.count}</h1>
-        </>
+        <div>
+            <h1 title="TDD">Prop Type {props.count}</h1>
+        </div>
     )
 };
 
